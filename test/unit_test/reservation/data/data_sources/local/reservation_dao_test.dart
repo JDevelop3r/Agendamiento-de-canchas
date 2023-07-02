@@ -55,5 +55,12 @@ void main() {
       // expect 2 reservation
       expect(reservations.length, 2);
     });
+
+    test('delete reservation', () async {
+      await reservationDao.deleteReservation(1);
+      final reservations = await reservationDao.getReservations();
+      // expect 2 reservation
+      expect(reservations.length, 1);
+    });
   });
 }
