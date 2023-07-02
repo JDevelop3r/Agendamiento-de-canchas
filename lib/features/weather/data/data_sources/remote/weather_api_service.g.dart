@@ -39,8 +39,8 @@ class _WeatherApiService implements WeatherApiService {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<Map<String, dynamic>>>(Options(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<HttpResponse<List<WeatherForecastModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -52,14 +52,10 @@ class _WeatherApiService implements WeatherApiService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    Map<String, dynamic> dailyMap = _result.data!['daily'];
-    List time = dailyMap['time'];
-    List precipitation = dailyMap['precipitation_probability_max'];
-
-    var value = time.asMap().entries.map((MapEntry i) {
-      return WeatherForecastModel(
-          date: DateTime.parse(i.value), precipitation: precipitation[i.key]);
-    }).toList();
+    var value = _result.data!
+        .map((dynamic i) =>
+            WeatherForecastModel.fromJson(i as Map<String, dynamic>))
+        .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

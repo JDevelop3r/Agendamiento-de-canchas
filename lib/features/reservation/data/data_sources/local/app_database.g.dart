@@ -198,8 +198,8 @@ class _$ReservationDao extends ReservationDao {
   }
 
   @override
-  Future<void> insertReservation(ReservationModel reservation) async {
-    await _reservationModelInsertionAdapter.insert(
+  Future<int> insertReservation(ReservationModel reservation) {
+    return _reservationModelInsertionAdapter.insertAndReturnId(
         reservation, OnConflictStrategy.abort);
   }
 }

@@ -4,7 +4,7 @@ import 'package:floor/floor.dart';
 @dao
 abstract class ReservationDao {
   @Insert()
-  Future<void> insertReservation(ReservationModel reservation);
+  Future<int> insertReservation(ReservationModel reservation);
 
   @Query('DELETE FROM reservation WHERE id = :id')
   Future<void> deleteReservation(int id);
