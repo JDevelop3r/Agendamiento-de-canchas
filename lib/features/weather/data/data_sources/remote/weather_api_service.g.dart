@@ -13,7 +13,7 @@ class _WeatherApiService implements WeatherApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://api.openweathermap.org/data/2.5/forecast/daily';
+    baseUrl ??= 'https://api.open-meteo.com';
   }
 
   final Dio _dio;
@@ -21,38 +21,45 @@ class _WeatherApiService implements WeatherApiService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<WeatherForecastModel>> getWeatherForecast({
-    appid,
+  Future<HttpResponse<List<WeatherForecastModel>>> getWeatherForecast({
     lat,
     lon,
+    daily = 'precipitation_probability_max',
+    timezone = 'auto',
     cnt = 16,
-    units = 'metric',
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'appid': appid,
-      r'lat': lat,
-      r'lon': lon,
-      r'cnt': cnt,
-      r'units': units,
+      r'latitude': lat,
+      r'longitude': lon,
+      r'daily': daily,
+      r'timezone': timezone,
+      r'forecast_days': cnt,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<WeatherForecastModel>>(Options(
+        _setStreamType<HttpResponse<Map<String, dynamic>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/endpoint',
+              '/v1/forecast',
               queryParameters: queryParameters,
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = WeatherForecastModel.fromJson(_result.data!);
+    Map<String, dynamic> dailyMap = _result.data!['daily'];
+    List time = dailyMap['time'];
+    List precipitation = dailyMap['precipitation_probability_max'];
+
+    var value = time.asMap().entries.map((MapEntry i) {
+      return WeatherForecastModel(
+          date: DateTime.parse(i.value), precipitation: precipitation[i.key]);
+    }).toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

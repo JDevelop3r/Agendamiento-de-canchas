@@ -13,11 +13,12 @@ class WeatherRepositoryImpl implements WeatherRepository {
   WeatherRepositoryImpl(this._weatherApiService);
 
   @override
-  Future<DataState<WeatherForecastEntity>> getWeather() async {
+  Future<DataState<List<WeatherForecastEntity>>> getWeather() async {
     try {
       final httpResponse = await _weatherApiService.getWeatherForecast(
-          appid: weatherAPIKey, lat: fieldsLat, lon: fieldsLon);
-
+          lat: fieldsLat, lon: fieldsLon);
+      print(httpResponse.response);
+      print('httpResponse.response');
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       }
@@ -28,6 +29,9 @@ class WeatherRepositoryImpl implements WeatherRepository {
           type: DioExceptionType.badResponse,
           response: httpResponse.response));
     } on DioException catch (e) {
+      print('httpResponse error');
+      print(e.response);
+      print(e.error);
       return DataFailed(e);
     }
   }

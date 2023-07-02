@@ -3,13 +3,16 @@ import 'package:agendamiento_canchas/features/reservation/presentation/bloc/rese
 import 'package:agendamiento_canchas/features/reservation/presentation/bloc/reservations/reservation_event.dart';
 import 'package:agendamiento_canchas/features/reservation/presentation/bloc/reservations/reservation_state.dart';
 import 'package:agendamiento_canchas/features/reservation/presentation/widgets/reservation_tile.dart';
+import 'package:agendamiento_canchas/features/weather/domain/entities/weather_forecast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReservationListPage extends StatelessWidget {
   static String route = '/';
-  const ReservationListPage({super.key});
+  ReservationListPage({super.key});
+
+  List<WeatherForecastEntity>? weather;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +37,7 @@ class ReservationListPage extends StatelessWidget {
         if (state is ReservationsLoading) {
           return const Center(child: CupertinoActivityIndicator());
         }
+
         if (state is ReservationsDone) {
           if (state.reservations!.isEmpty) {
             return const Center(

@@ -4,13 +4,14 @@ import 'package:agendamiento_canchas/features/weather/domain/entities/weather_fo
 import 'package:agendamiento_canchas/features/weather/domain/repository/weather_repository.dart';
 
 class GetWeatherUseCase
-    implements UseCase<DataState<WeatherForecastEntity>, void> {
+    implements UseCase<DataState<List<WeatherForecastEntity>>, void> {
   final WeatherRepository _weatherRepository;
 
   GetWeatherUseCase(this._weatherRepository);
 
   @override
-  Future<DataState<WeatherForecastEntity>> call({void params}) {
+  Future<DataState<List<WeatherForecastEntity>>> call({void params}) {
+    print('GetWeatherUseCase');
     return _weatherRepository.getWeather();
   }
 }

@@ -1,14 +1,11 @@
-import 'package:agendamiento_canchas/features/weather/data/models/city.dart';
-import 'package:agendamiento_canchas/features/weather/domain/entities/weather_info.dart';
 import 'package:equatable/equatable.dart';
 
 class WeatherForecastEntity extends Equatable {
-  CityModel? city;
+  DateTime date;
+  int? precipitation;
 
-  List<WeatherInfoEntity>? list;
-
-  WeatherForecastEntity({this.city, this.list});
+  WeatherForecastEntity({required this.date, this.precipitation});
 
   @override
-  List<Object?> get props => [city, list];
+  List<Object?> get props => [date, precipitation];
 }

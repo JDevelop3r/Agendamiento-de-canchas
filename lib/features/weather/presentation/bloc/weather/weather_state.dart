@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class WeatherState extends Equatable {
-  final WeatherForecastEntity? weather;
+  final List<WeatherForecastEntity>? weather;
   final DioException? error;
 
   const WeatherState({this.weather, this.error});
@@ -17,7 +17,8 @@ class WeatherLoading extends WeatherState {
 }
 
 class WeatherDone extends WeatherState {
-  const WeatherDone(WeatherForecastEntity weather) : super(weather: weather);
+  const WeatherDone(List<WeatherForecastEntity> weather)
+      : super(weather: weather);
 }
 
 class WeatherError extends WeatherState {

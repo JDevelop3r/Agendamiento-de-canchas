@@ -9,11 +9,12 @@ part 'weather_api_service.g.dart';
 abstract class WeatherApiService {
   factory WeatherApiService(Dio dio) = _WeatherApiService;
 
-  @GET('/endpoint')
-  Future<HttpResponse<WeatherForecastModel>> getWeatherForecast(
-      {@Query('appid') String? appid,
-      @Query('lat') double? lat,
-      @Query('lon') double? lon,
-      @Query('cnt') int cnt = 16,
-      @Query('units') String units = 'metric'});
+  @GET('/v1/forecast')
+  Future<HttpResponse<List<WeatherForecastModel>>> getWeatherForecast({
+    @Query('latitude') double? lat,
+    @Query('longitude') double? lon,
+    @Query('daily') String daily = 'precipitation_probability_max',
+    @Query('timezone') String timezone = 'auto',
+    @Query('forecast_days') int cnt = 16,
+  });
 }

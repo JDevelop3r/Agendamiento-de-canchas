@@ -2,6 +2,6 @@ import 'package:agendamiento_canchas/features/reservation/presentation/pages/add
 import 'package:agendamiento_canchas/features/reservation/presentation/pages/reservation_list/reservation_list.dart';
 
 final routes = {
-  '/': (_) => const ReservationListPage(),
-  '/addReservation': (_) => AddNewReservationPage(),
+  '/': (_) => ReservationListPage(),
+  '/addReservation': (_) => const AddNewReservationPage(),
 };

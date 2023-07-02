@@ -13,6 +13,7 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // initialize dependencies
   await initializeDateFormatting();
   await initalizeDependencies();
   await databaseInitialization(sl());
@@ -27,7 +28,7 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider<WeatherBloc>(
-              create: (context) => sl()..add(const GetWeather())),
+              create: (context) => sl<WeatherBloc>()..add(const GetWeather())),
           BlocProvider<ReservationsBloc>(
               create: (context) => sl()..add(const GetSavedReservations()))
         ],

@@ -12,7 +12,8 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   }
 
   void onGetWeather(GetWeather event, Emitter<WeatherState> emitter) async {
-    final dataState = await _getWeatherUseCase.call();
+    print('onGetWeather');
+    final dataState = await _getWeatherUseCase();
 
     if (dataState is DataSuccess && dataState.data != null) {
       emitter(WeatherDone(dataState.data!));
