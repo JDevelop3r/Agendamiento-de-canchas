@@ -3,13 +3,13 @@ import 'package:agendamiento_canchas/features/reservation/domain/entities/reserv
 import 'package:agendamiento_canchas/features/reservation/domain/repository/reservations_repository.dart';
 
 class GetReservationsByDateUseCase
-    implements UseCase<List<ReservationEntity>, void> {
+    implements UseCase<List<ReservationEntity>, DateTime> {
   final ReservationsRepository _reservationRepository;
 
   GetReservationsByDateUseCase(this._reservationRepository);
 
   @override
-  Future<List<ReservationEntity>> call({void params}) {
-    return _reservationRepository.getReservationsByDate();
+  Future<List<ReservationEntity>> call({DateTime? params}) {
+    return _reservationRepository.getReservationsByDate(params!);
   }
 }

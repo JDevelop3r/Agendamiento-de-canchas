@@ -141,7 +141,8 @@ class _AddNewReservationPageState extends State<AddNewReservationPage> {
   }
 
   Future<bool> _validateReservationsByDate() async {
-    final reservations = await sl<GetReservationsByDateUseCase>().call();
+    final reservations =
+        await sl<GetReservationsByDateUseCase>().call(params: _dateSelected);
 
     if (reservations.length >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(

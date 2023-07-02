@@ -1,4 +1,5 @@
 import 'package:agendamiento_canchas/features/reservation/domain/entities/reservation.dart';
+import 'package:agendamiento_canchas/features/reservation/presentation/widgets/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,14 +15,14 @@ class ReservationTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: Colors.blue.withOpacity(0.2)),
+          color: Theme.of(context).floatingActionButtonTheme.backgroundColor),
       padding: const EdgeInsetsDirectional.only(
           start: 14, end: 14, bottom: 7, top: 7),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildTitleAndDescription(),
-          _buildRemovableArea(),
+          _buildRemovableArea(context),
         ],
       ),
     );
@@ -71,9 +72,9 @@ class ReservationTile extends StatelessWidget {
     );
   }
 
-  Widget _buildRemovableArea() {
+  Widget _buildRemovableArea(BuildContext context) {
     return GestureDetector(
-      onTap: () => _onRemove(),
+      onTap: () => _onRemove(context),
       child: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
         child: Icon(Icons.remove_circle_outline, color: Colors.red),
@@ -81,7 +82,12 @@ class ReservationTile extends StatelessWidget {
     );
   }
 
-  void _onRemove() {
-    onRemove(reservation);
+  void _onRemove(BuildContext context) async {
+    final confirm = await showAlertDialog(context,
+        message: '¿Deseas eliminar esta reservación?',
+        title: 'Eliminar Reservación');
+    if (confirm == true) {
+      onRemove(reservation);
+    }
   }
 }
