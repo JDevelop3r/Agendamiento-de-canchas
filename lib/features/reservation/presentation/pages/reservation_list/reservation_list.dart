@@ -4,6 +4,8 @@ import 'package:agendamiento_canchas/features/reservation/presentation/bloc/rese
 import 'package:agendamiento_canchas/features/reservation/presentation/bloc/reservations/reservation_state.dart';
 import 'package:agendamiento_canchas/features/reservation/presentation/widgets/reservation_tile.dart';
 import 'package:agendamiento_canchas/features/weather/domain/entities/weather_forecast.dart';
+import 'package:agendamiento_canchas/features/weather/presentation/bloc/weather/weather_bloc.dart';
+import 'package:agendamiento_canchas/features/weather/presentation/bloc/weather/weather_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,37 +34,52 @@ class ReservationListPage extends StatelessWidget {
   }
 
   _buildBody() {
-    return BlocBuilder<ReservationsBloc, ReservationsState>(
-      builder: (_, state) {
-        if (state is ReservationsLoading) {
-          return const Center(child: CupertinoActivityIndicator());
-        }
+    return BlocBuilder<WeatherBloc, WeatherState>(builder: (_, weatherState) {
+      if (weatherState is WeatherLoading) {
+        return const Center(child: CupertinoActivityIndicator());
+      }
 
-        if (state is ReservationsDone) {
-          if (state.reservations!.isEmpty) {
-            return const Center(
-              child: Text('No hay reservaciones en este momento.',
-                  style: TextStyle(fontStyle: FontStyle.italic)),
-            );
+      if (weatherState is WeatherError) {
+        return const Center(
+          child: Text('Ups! Algo salio mal.'),
+        );
+      }
+
+      return BlocBuilder<ReservationsBloc, ReservationsState>(
+        builder: (_, state) {
+          if (state is ReservationsLoading) {
+            return const Center(child: CupertinoActivityIndicator());
           }
 
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: ReservationTile(
-                  reservation: state.reservations![index],
-                  onRemove: _onRemoveReservation(context),
-                ),
+          if (state is ReservationsDone) {
+            if (state.reservations!.isEmpty) {
+              return const Center(
+                child: Text('No hay reservaciones en este momento.',
+                    style: TextStyle(fontStyle: FontStyle.italic)),
               );
-            },
-            itemCount: state.reservations!.length,
-          );
-        }
-        return const SizedBox();
-      },
-    );
+            }
+
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                final reservation = state.reservations![index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  child: ReservationTile(
+                    reservation: reservation,
+                    onRemove: _onRemoveReservation(context),
+                    weather: weatherState.weather!.firstWhere(
+                        (element) => element.date == reservation.date),
+                  ),
+                );
+              },
+              itemCount: state.reservations!.length,
+            );
+          }
+          return const SizedBox();
+        },
+      );
+    });
   }
 
   _buildFloatingActionButton(BuildContext context) {

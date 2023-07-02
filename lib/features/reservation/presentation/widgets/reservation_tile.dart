@@ -1,49 +1,40 @@
 import 'package:agendamiento_canchas/features/reservation/domain/entities/reservation.dart';
 import 'package:agendamiento_canchas/features/reservation/presentation/widgets/confirm_dialog.dart';
 import 'package:agendamiento_canchas/features/weather/domain/entities/weather_forecast.dart';
-import 'package:agendamiento_canchas/features/weather/presentation/bloc/weather/weather_bloc.dart';
-import 'package:agendamiento_canchas/features/weather/presentation/bloc/weather/weather_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class ReservationTile extends StatelessWidget {
   final ReservationEntity reservation;
   final void Function(ReservationEntity) onRemove;
   final format = DateFormat.yMd('es');
+  final WeatherForecastEntity weather;
 
   ReservationTile(
-      {super.key, required this.reservation, required this.onRemove});
+      {super.key,
+      required this.reservation,
+      required this.onRemove,
+      required this.weather});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WeatherBloc, WeatherState>(builder: (_, state) {
-      if (state is WeatherLoading) {
-        return const Center(child: CupertinoActivityIndicator());
-      }
-
-      // print(state.weather);
-
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).floatingActionButtonTheme.backgroundColor),
-        padding: const EdgeInsetsDirectional.only(
-            start: 14, end: 14, bottom: 7, top: 7),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildTitleAndDescription(),
-            _buildTimePrecipitationForecast(state.weather!
-                .firstWhere((element) => element.date == reservation.date)),
-            _buildRemovableArea(context),
-          ],
-        ),
-      );
-    });
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Theme.of(context).floatingActionButtonTheme.backgroundColor),
+      padding: const EdgeInsetsDirectional.only(
+          start: 14, end: 14, bottom: 7, top: 7),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildTitleAndDescription(),
+          _buildTimePrecipitationForecast(),
+          _buildRemovableArea(context),
+        ],
+      ),
+    );
   }
 
-  Widget _buildTimePrecipitationForecast(WeatherForecastEntity weather) {
+  Widget _buildTimePrecipitationForecast() {
     // print(weather);
     return Center(
         child: Container(

@@ -7,6 +7,9 @@ import 'package:agendamiento_canchas/features/reservation/presentation/bloc/fiel
 import 'package:agendamiento_canchas/features/reservation/presentation/bloc/reservations/reservation_bloc.dart';
 import 'package:agendamiento_canchas/features/reservation/presentation/bloc/reservations/reservation_event.dart';
 import 'package:agendamiento_canchas/features/reservation/presentation/widgets/date_picker_field.dart';
+import 'package:agendamiento_canchas/features/weather/domain/entities/weather_forecast.dart';
+import 'package:agendamiento_canchas/features/weather/presentation/bloc/weather/weather_bloc.dart';
+import 'package:agendamiento_canchas/features/weather/presentation/bloc/weather/weather_state.dart';
 import 'package:agendamiento_canchas/initialize_dependencies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,17 +47,31 @@ class _AddNewReservationPageState extends State<AddNewReservationPage> {
   }
 
   _buildBody(BuildContext context) {
-    return BlocBuilder<FieldsBloc, FieldsState>(builder: (context, state) {
-      if (state is FieldsLoading) {
+    return BlocBuilder<WeatherBloc, WeatherState>(builder: (_, weatherState) {
+      if (weatherState is WeatherLoading) {
         return const Center(child: CupertinoActivityIndicator());
-      } else if (state is FieldsDone) {
-        return _buildNewReservationForm(state.fields!, context);
       }
-      return Container();
+
+      if (weatherState is WeatherError) {
+        return const Center(
+          child: Text('Ups! Algo salio mal.'),
+        );
+      }
+
+      return BlocBuilder<FieldsBloc, FieldsState>(builder: (context, state) {
+        if (state is FieldsLoading) {
+          return const Center(child: CupertinoActivityIndicator());
+        } else if (state is FieldsDone) {
+          return _buildNewReservationForm(
+              state.fields!, weatherState.weather!, context);
+        }
+        return Container();
+      });
     });
   }
 
-  _buildNewReservationForm(List<FieldEntity> fields, BuildContext context) {
+  _buildNewReservationForm(List<FieldEntity> fields,
+      List<WeatherForecastEntity> weather, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
       child: Column(
@@ -103,9 +120,34 @@ class _AddNewReservationPageState extends State<AddNewReservationPage> {
           ),
           OutlinedButton(
               onPressed: () => _onInsertNewReservation(context),
-              child: const Text('Agendar reservación'))
+              child: const Text('Agendar reservación')),
+          const SizedBox(
+            height: 16,
+          ),
+          if (_dateSelected != null) buildWeatherDetection(weather),
         ],
       ),
+    );
+  }
+
+  Widget buildWeatherDetection(List<WeatherForecastEntity> weatherList) {
+    final weather = weatherList.firstWhere(
+      (element) => element.date == _dateSelected,
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.black.withOpacity(0.1)),
+      child: weather.precipitation != null
+          ? Text(
+              'Porcentaje de lluvia para el dia escogido: ${weather.precipitation}%',
+              textAlign: TextAlign.center,
+            )
+          : const Text(
+              'No se tiene registro de lluvia para el dia seleccionado',
+              textAlign: TextAlign.center,
+            ),
     );
   }
 
@@ -159,6 +201,8 @@ class _AddNewReservationPageState extends State<AddNewReservationPage> {
   }
 
   void _onDateSelected(DateTime date) {
-    _dateSelected = date;
+    setState(() {
+      _dateSelected = date;
+    });
   }
 }

@@ -38,7 +38,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 16)));
+        lastDate: DateTime.now().add(const Duration(days: 15)));
 
     if (picked != null) {
       setState(() {
